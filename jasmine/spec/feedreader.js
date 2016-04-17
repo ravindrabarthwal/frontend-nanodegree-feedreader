@@ -31,13 +31,13 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-        it('url are defined and not null',function() {
+        it('url are defined and not empty',function() {
             //Loop through all the objects and check expectations
             //for each object
             var length = allFeeds.length;
             for(var i = 0; i < length; i++){
                 expect(allFeeds[i].url).toBeDefined();
-                expect(allFeeds[i].url).not.toBeNull();
+                expect(allFeeds[i].url.length).toBeGreaterThan(0);
             }
         });
 
@@ -46,13 +46,13 @@ $(function() {
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
-        it('name are defined and not null',function() {
+        it('name are defined and not empty',function() {
             //Loop through all the objects and check expectations
             //for each object
             var length = allFeeds.length;
             for(var i = 0; i < length; i++){
                 expect(allFeeds[i].name).toBeDefined();
-                expect(allFeeds[i].name).not.toBeNull();
+                expect(allFeeds[i].name.length).toBeGreaterThan(0);
             }
         });
     });
@@ -69,7 +69,7 @@ $(function() {
             //check the body has class of menu-hidden
             //then expecting it to be true.
             var isHidden = $('body').hasClass('menu-hidden');
-            expect(isHidden).toBe(true);
+            expect(isHidden).toBeTruthy();
         });
 
          /* A test that ensures the menu changes
@@ -77,15 +77,17 @@ $(function() {
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
+
         it('changes visibility when menu icon clicked', function() {
+            var menuIcon = $('.menu-icon-link');
             //Toggle menu (showing, this time)
-            $('body').toggleClass('menu-hidden');
+            menuIcon.click();
             //expecting body don't have menu-hidden class
-            expect($('body').hasClass('menu-hidden')).not.toBe(true);
+            expect($('body').hasClass('menu-hidden')).toBeFalsy();
             //Toggle menu (hiding, this time)
-            $('body').toggleClass('menu-hidden');
+            menuIcon.click();
             //expecting that body has class menu-hidden
-            expect($('body').hasClass('menu-hidden')).toBe(true);
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
     });
 
@@ -103,33 +105,34 @@ $(function() {
             loadFeed(0, done);
          });
 
-        it('must have a single .entry element', function(done) {
+        it('must have a single .entry element', function() {
             //check if got .entry element
-            var result = $('.entry').length ? true : false;
+            var result = $('.entry').length;
             //expecting the value to be true
-            expect(result).toBe(true);
-            done();
+            expect(result).toBeGreaterThan(0);
         });
     });
 
     /* TODO: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
 
+        var
+        initialFeed,
+        changedFeed;
         /* A test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
         beforeEach(function(done) {
+            initialFeed = $('.header-title').text();
             //loading different feeds asynchronously
-            loadFeed(1, done);
+            loadFeed(2, done);
         });
 
-        it('on load changes content', function(done) {
-            //getting the url of the blog post for the first feed item
-            var url = $($('.entry-link')[0]).attr('href');
-            //checking if url matches with css-tricks.com domain
-            expect(url).toMatch("css-tricks.com");
-            done();
+        it('on load changes content', function() {
+            changedFeed = $('.header-title').text();
+            var isChanged = initialFeed === changedFeed ? true : false;
+            expect(isChanged).toBeFalsy();
         });
 
     });
