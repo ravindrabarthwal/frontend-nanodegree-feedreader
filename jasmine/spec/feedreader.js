@@ -79,13 +79,13 @@ $(function() {
           */
 
         it('changes visibility when menu icon clicked', function() {
-            var menuIcon = $('.menu-icon-link');
+            var $menuIcon = $('.menu-icon-link');
             //Toggle menu (showing, this time)
-            menuIcon.click();
+            $menuIcon.click();
             //expecting body don't have menu-hidden class
             expect($('body').hasClass('menu-hidden')).toBeFalsy();
             //Toggle menu (hiding, this time)
-            menuIcon.click();
+            $menuIcon.click();
             //expecting that body has class menu-hidden
             expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
@@ -115,24 +115,36 @@ $(function() {
 
     /* TODO: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
-
-        var
-        initialFeed,
-        changedFeed;
         /* A test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var
+        $firstFeedTitle,
+        $firstFeedLink,
+        $secondFeedTitle,
+        $secondFeedLink;
+
         beforeEach(function(done) {
-            initialFeed = $('.header-title').text();
-            //loading different feeds asynchronously
-            loadFeed(2, done);
+            //Load The Feed and save title and link of
+            //first feed entry
+            loadFeed(2, function() {
+                $firstFeedTitle = $($('.entry h2')[0]).text();
+                $firstFeedLink = $($('.entry-link')).attr('href');
+            });
+
+            //Load different Feed and save title and link of
+            //first feed entry and at last trigger done
+            loadFeed(3, function() {
+                $secondFeedTitle = $($('.entry h2')[0]).text();
+                $secondFeedLink = $($('.entry-link')[0]).attr('href');
+                done();
+            });
         });
 
         it('on load changes content', function() {
-            changedFeed = $('.header-title').text();
-            var isChanged = initialFeed === changedFeed ? true : false;
-            expect(isChanged).toBeFalsy();
+            expect($firstFeedTitle).not.toEqual($secondFeedTitle);
+            expect($firstFeedLink).not.toEqual($secondFeedLink);
         });
 
     });
